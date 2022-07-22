@@ -31,11 +31,12 @@ router.get("/byuser/:id", async (req, res) => {
 });
 
 router.post("/", async (req, res) => {
-    const userId = req.body.userid;
+    const userId = (req.session as any).userId;
     if (!userId) {
-        res.sendStatus(400);
+        res.sendStatus(401);
         return;
     }
+
     const user = await User.findOne({ where: { id: userId } });
     if (!user) {
         res.sendStatus(403);
@@ -48,9 +49,25 @@ router.post("/", async (req, res) => {
 });
 
 router.put("/:id", async (req, res) => {
+    const userId = (req.session as any).userId;
+    if (!userId) {
+        res.sendStatus(401);
+        return;
+    }
+
+    const user = await User.findOne({ where: { id: userId } });
+    if (!user) {
+        res.sendStatus(403);
+        return;
+    }
+
     const orderId = req.params.id;
 
     const order = await Order.findOne({ where: { id: orderId } });
+    if (order.userId != user.id) {
+        res.sendStatus(403);
+        return;
+    }
     if (order) {
         order.update({ description: req.body.description });
         res.json(order);
@@ -59,9 +76,26 @@ router.put("/:id", async (req, res) => {
 });
 
 router.delete("/:id", async (req, res) => {
+
+    const userId = (req.session as any).userId;
+    if (!userId) {
+        res.sendStatus(401);
+        return;
+    }
+
+    const user = await User.findOne({ where: { id: userId } });
+    if (!user) {
+        res.sendStatus(403);
+        return;
+    }
+
     const orderId = req.params.id;
 
     const order = await Order.findOne({ where: { id: orderId } });
+    if (order.userId != user.id) {
+        res.sendStatus(403);
+        return;
+    }
     if (order) {
         order.destroy();
         res.sendStatus(204);

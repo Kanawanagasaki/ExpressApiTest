@@ -18,7 +18,7 @@ export class SqliteService {
             await this._sequelize.authenticate();
             console.log('SQLite connection has been established successfully');
 
-            await this._sequelize.sync({ force: true });
+            await this._sequelize.sync();
             console.log('Done: sync');
         } catch (error) {
             console.error('Unable to connect to the database:', error);

@@ -6,6 +6,7 @@ import { router as userRouter } from './controllers/UserController';
 import { router as orderRouter } from './controllers/OrderController';
 
 const express = require('express');
+const session = require('express-session');
 const bodyParser = require('body-parser');
 
 const sequelize = new Sequelize({
@@ -25,5 +26,9 @@ app.listen(port, async () => {
     await SqliteService.getInstance().init();
 });
 
+app.use(session({
+    secret: 'UwUNyaKawaiiDesu',
+    saveUninitialized: true
+}));
 app.use("/api/user", userRouter);
 app.use("/api/order", orderRouter);
