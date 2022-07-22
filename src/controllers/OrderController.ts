@@ -10,7 +10,8 @@ router.get("/", async (req, res) => {
     const skip = (page - 1) * limit;
 
     const orders = await Order.findAll({ offset: skip, limit: limit });
-    res.json(orders);
+    const count = await Order.count();
+    res.json({ items: orders, count: count, page: page, totalPages: Math.ceil(count / limit) });
 });
 
 router.get("/:id", async (req, res) => {
@@ -31,14 +32,12 @@ router.get("/byuser/:id", async (req, res) => {
 
 router.post("/", async (req, res) => {
     const userId = req.body.userid;
-    if(!userId)
-    {
+    if (!userId) {
         res.sendStatus(400);
         return;
     }
     const user = await User.findOne({ where: { id: userId } });
-    if (!user)
-    {
+    if (!user) {
         res.sendStatus(403);
         return;
     }
