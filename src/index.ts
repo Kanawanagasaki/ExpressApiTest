@@ -9,14 +9,8 @@ const express = require('express');
 const session = require('express-session');
 const bodyParser = require('body-parser');
 
-const sequelize = new Sequelize({
-    dialect: 'sqlite',
-    storage: 'database.sqlite',
-    models: [User, Order]
-});
-
 const app = express();
-app.use(bodyParser.json()); // support json encoded bodies
+app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }))
 
 const port = 3000;
